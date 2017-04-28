@@ -1,0 +1,137 @@
+%label databin as x1,x2,...
+%label Puncta as y1,y2...
+%label Punctathreshold as z1,z2...
+
+Ch1probe = 'vglut';%green
+Ch2probe = 'rabV';%far red
+Ch3probe = 'vgat';%red
+outputcell='A7' ;
+
+folder = uigetdir;
+cd(folder)
+%label databin as x1,x2,...
+
+%Plot all points on a 3D axis
+PunctaMats = dir('*_Puncta.mat');
+nfiles = length(PunctaMats);
+
+% figure;
+% hold on
+% 
+% %Make 3D scatter plot
+% for i=1:nfiles;
+%     
+%     tmp = load(PunctaMats(i).name);
+%    
+%     pntclr = zeros(length(tmp.Puncta),3);
+%     x =zeros(length(tmp.Puncta),1);
+%     y =zeros(length(tmp.Puncta),1);
+%     z =zeros(length(tmp.Puncta),1);
+%     
+%     for j=1:length(tmp.Puncta)
+%     
+%     x(j) = tmp.Puncta(j,2);
+%     y(j) = tmp.Puncta(j,3);
+%     z(j) = tmp.Puncta(j,4);
+%         
+%     
+%         if x(j)>x(1) 
+%             pntclr(j,1) = 0;
+%         else
+%             pntclr(j,1) = 1;
+%         end
+%          if y(j)>y(1) 
+%             pntclr(j,2) = 0;
+%         else
+%             pntclr(j,2) = 1;
+%          end
+%          if z(j)>z(1) 
+%             pntclr(j,3) = 0;
+%         else
+%             pntclr(j,3) = 1;
+%         end
+%     end
+% scatter3(x(2:end),y(2:end),z(2:end),72,pntclr(2:end,:),'.');  
+% ylabel({Ch2probe});xlabel({Ch1probe});zlabel({Ch3probe});axis('tight')
+% view(20,10);
+% end
+
+%Make 2D scatter plots
+%Concatenate all Puncta mats
+FigHandle = figure;
+set(FigHandle, 'Position', [100, 100, 300, 900]);
+
+hold on
+for i=1:nfiles;
+    
+    tmp = load(PunctaMats(i).name);
+   
+    pntclr = zeros(length(tmp.Puncta),3);
+    x =zeros(length(tmp.Puncta),1);
+    y =zeros(length(tmp.Puncta),1);
+    z =zeros(length(tmp.Puncta),1);
+    
+    %for j=1:length(tmp.Puncta)
+    for j=1:size(tmp.Puncta,1)
+    x(j) = tmp.Puncta(j,2);
+    y(j) = tmp.Puncta(j,3);
+    z(j) = tmp.Puncta(j,4);
+        
+    %Pseudo color the points according to which channel they are positive
+    
+%         if x(j)>x(1) %If the coverage in Ch.1 is greater than threshold
+%             pntclr(j,1) = 0;
+%         else
+%             pntclr(j,1) = 1;
+%         end
+%          if y(j)>y(1) %If the coverage in Ch.2 is greater than threshold
+%             pntclr(j,2) = 0;
+%         else
+%             pntclr(j,2) = 1;
+%          end
+%          if z(j)>z(1) %If the coverage in Ch.3 is greater than threshold
+%             pntclr(j,3) = 1;
+%         else
+%             pntclr(j,3) = 0;
+%         end
+    end
+hold on
+subplot(3,1,1);
+scatter(x(2:end),y(2:end),72,pntclr(2:end,:),'.')
+ylabel({Ch2probe});xlabel({Ch1probe});axis('tight')
+hold on
+subplot(3,1,2);
+scatter(z(2:end),x(2:end),72,pntclr(2:end,:),'.')
+ylabel({Ch1probe});xlabel({Ch3probe});axis('tight')
+hold on
+subplot(3,1,3);
+scatter(z(2:end),y(2:end),72,pntclr(2:end,:),'.')
+ylabel({Ch2probe});xlabel({Ch3probe});axis('tight')
+end
+
+
+% Y = [];
+% for i=1:nfiles
+%     tmp{i} = load(PunctaMats(i).name);
+%     tmp2{i} = temp{i}.Puncta(2:end,:); %remove thresholds from matrices
+% end
+% Y = cat(1,tmp2{:});
+% 
+% figure;
+% subplot(2,3,1);
+% plot(Y(:,3),Y(:,2),'.k')
+% ylabel({Ch1probe});xlabel({Ch2probe});axis('tight')
+% subplot(2,3,2)
+% plot(Y(:,3),Y(:,4),'.k')
+% axis('tight')
+% ylabel({Ch3probe});xlabel({Ch2probe})
+% subplot(2,3,3)
+% plot(Y(:,2),Y(:,4),'.k')
+% ylabel({Ch3probe});xlabel({Ch1probe});axis('tight')
+% title('Proportional coverage of cell with Puncta')
+% 
+% figure;
+% scatter3(Y(:,3),Y(:,2),Y(:,4),'.k');
+% ylabel({Ch1probe});xlabel({Ch2probe});zlabel({Ch3probe});
+% 
+% clear all
